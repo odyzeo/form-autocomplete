@@ -1,26 +1,111 @@
 # zeo-form-autocomplete
 
-## Project setup
+Simple autocomplete Vue.js component.
+
+## Installation
+
+### npm
+
 ```
-yarn install
+npm install --save zeo-form-autocomplete
 ```
 
-### Compiles and hot-reloads for development
+### yarn
+
 ```
-yarn run serve
+yarn add zeo-form-autocomplete
 ```
 
-### Compiles and minifies for production
+Import component in your main.js file:
+
 ```
-yarn run build
+import 'zeo-form-autocomplete';
 ```
 
-### Run your tests
+Component will be globaly registered.
+
+Import styles or make your own.
+
 ```
-yarn run test
+import 'zeo-form-autocomplete/dist/zeo-form-autocomplete.css';
 ```
 
-### Lints and fixes files
+## Usage
+
 ```
-yarn run lint
+<template>
+  <zeo-form-autocomplete
+    v-model="selectedItems"
+    :label="'Participants'"
+    :placeholder="'Type to search'"
+    :options="filteredItems"
+    :option-id="'name'"
+    :loading="isSearchLoading"
+    :hide-selected="true"
+    :close-on-select="false"
+    :select-first="true"
+    @search-change="search"
+  >
+    <template
+      slot="tag"
+      slot-scope="props">
+      {{ props.item.name }}
+    </template>
+    <template
+      slot="item"
+      slot-scope="props">
+      {{ props.item.name }}
+    </template>
+    <template slot="no-results">
+      Participants not found
+    </template>
+    <template slot="loading">
+      ...loading...
+    </template>
+  </zeo-form-autocomplete>
+</template>
 ```
+
+<script>
+import ZeoFormAutocomplete from 'zeo-form-autocomplete'
+
+export default {
+  name: 'App',
+  components: {
+    ZeoFormAutocomplete,
+  },
+  data() {
+    return {
+      selectedItems: [],
+      items: [
+        { name: 'Denton' },
+        { name: 'Pe4k' },
+        { name: 'PaDi' },
+        { name: 'Zoli' },
+        { name: 'Zombi' },
+      ],
+      filteredItems: [],
+      isSearchLoading: false,
+    };
+  },
+  methods: {
+    search(query) {
+      this.filteredItems = [];
+      this.isSearchLoading = true;
+
+      if (query.length < this.minSearchLength) {
+        return;
+      }
+
+      this.startSearching(query);
+    },
+    startSearching(query) {
+      this.filteredItems = this.items.filter(item =>
+        item.name.toLowerCase().includes(query.toLowerCase()));
+      this.isSearchLoading = false;
+    },
+  },
+};
+</script>
+
+## Options

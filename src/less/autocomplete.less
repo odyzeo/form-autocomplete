@@ -1,0 +1,282 @@
+@import "~normalize.css";
+@import "variables";
+@import "mixins";
+
+@input-radius: 5px;
+@input-border-width: 2px;
+
+.input-block {
+  .font(13px, 300);
+
+  border-radius: @input-radius;
+}
+
+.input-block__field {
+  position: relative;
+  background: @form-input-background--light;
+  border-radius: @input-radius;
+  border: @input-border-width solid @form-input-background--light;
+  transition: border 0.2s ease;
+}
+
+.input-block__input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: @input-radius - @input-border-width;
+  padding: 30px 10px 10px;
+  background: @form-input-background--light;
+  resize: vertical;
+  appearance: none;
+
+  input& {
+    &::placeholder {
+      color: transparent;
+      transition: color 0.3s;
+    }
+  }
+
+  &:active,
+  &:focus {
+    outline: none;
+  }
+
+  &:focus {
+    &::placeholder {
+      color: fadeOut(@form-label-color--dark, 10%);
+    }
+  }
+}
+
+.input-block__label {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  z-index: 1;
+  color: #aaa7b4;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.input-block__input:focus + .input-block__label,
+.input-block--filled .input-block__label,
+.input-block--tags .input-block__label {
+  top: 10px;
+  font-size: 12px;
+  color: @form-label-color--dark;
+}
+
+/**
+ * Fix autofill label
+ */
+.input-block__input:-webkit-autofill + .input-block__label {
+  top: 10px;
+  font-size: 12px;
+  color: @form-label-color--dark;
+}
+
+/**
+ * Input label modifier
+ */
+.input-block--no-label {
+  .input-block__input {
+    padding: 20px 10px;
+  }
+}
+
+.input-block__error {
+  padding: 3px 3px 0;
+  color: @color--danger;
+  font-size: @font-size--xsmall;
+  line-height: 1.1;
+}
+
+/**
+ * Hider used for description label
+ */
+.input-block__hider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+
+  height: 25px;
+  background: @form-input-background--light;
+  border-radius: @input-radius;
+
+  pointer-events: none;
+}
+
+/**
+ * <form-autocomplete> tags styling
+ */
+.input-block__tags {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 27px 10px 7px;
+  background-color: @form-input-background--light;
+  border-radius: @input-radius;
+}
+
+.input-block__tag {
+  display: flex;
+  margin: 3px 3px 0 0;
+
+  border-radius: 2px;
+  background-color: @color--tag;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.input-block__tag-text {
+  padding: 2px 5px;
+  font-size: @font-size--xsmall;
+}
+
+.input-block__tag-remove {
+  display: flex;
+  align-items: center;
+  padding: 0 3px 0 3px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+
+  &:hover {
+    cursor: pointer;
+    background-color: darken(@color--tag, 20%);
+  }
+}
+
+/**
+ * <form-autocomplete> with tags
+ */
+.input-block--tags {
+  .input-block__input {
+    padding-top: 0;
+    display: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+}
+
+.input-block--tags-filled {
+  .input-block__tags {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .input-block__input {
+    display: block;
+  }
+}
+
+/**
+ * <form-autocomplete> dropdown
+ */
+.input-block__dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+
+  margin-top: -@input-radius;
+  padding: 0;
+  border-top: 1px solid #ddd;
+
+  // MAx 5 items
+  // max-height: 209px; // Set in props
+  overflow: auto;
+  border-bottom-left-radius: @input-radius;
+  border-bottom-right-radius: @input-radius;
+}
+
+.input-block__dropdown-item {
+  background: #ddd;
+  display: block;
+  padding: 10px;
+  color: #000;
+
+  transition: background-color 0.2s ease;
+  list-style: none;
+
+  &:last-child {
+    border-bottom-left-radius: @input-radius;
+    border-bottom-right-radius: @input-radius;
+  }
+
+  &.is-active {
+    background-color: #ccc;
+    font-weight: 700;
+  }
+
+  &:hover {
+    background-color: #ccc;
+    cursor: pointer;
+  }
+}
+
+.input-block__dropdown--no-results {
+  .input-block__dropdown-item {
+    &:hover {
+      background-color: @form-input-background--light;
+      cursor: initial;
+    }
+  }
+}
+
+/**
+ * <form-autocomplete> loading icon
+ */
+.input-block__loading {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  z-index: 1;
+}
+
+/**
+ * Form modifiers
+ */
+.form--dark {
+  .input-block__field {
+    background: @form-input-background--dark;
+    border-color: @form-input-background--dark;
+  }
+
+  .input-block__input {
+    background: @form-input-background--dark;
+    color: @form-input-color--light;
+  }
+
+  .input-block__label {
+    color: @form-label-color--light;
+  }
+
+  .separator__text {
+    color: #fff;
+
+    &:before,
+    &:after {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.form--invert {
+  @media (max-width: @break-t-max) {
+    .form--dark;
+  }
+}
+
+/**
+ * Form error state
+ */
+.input-block--error {
+  .input-block__field {
+    border-color: @color--danger;
+  }
+}
