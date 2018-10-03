@@ -16,13 +16,14 @@ npm install --save zeo-form-autocomplete
 yarn add zeo-form-autocomplete
 ```
 
-Import component in your main.js file:
+Import component in your where you want to use it and register it:
 
 ```
-import 'zeo-form-autocomplete';
+import 'Autocomplete' from 'zeo-form-autocomplete';
+export default {
+  components: { Autocomplete },
+}
 ```
-
-Component will be globaly registered.
 
 Import styles or make your own.
 

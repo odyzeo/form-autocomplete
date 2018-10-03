@@ -1,8 +1,8 @@
 {
   "name": "zeo-form-autocomplete",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Odyzeo form autocomplete component with Vue",
-  "main": "dist/zeo-form-autocomplete.common.js",
+  "main": "dist/zeo-form-autocomplete.umd.js",
   "keywords": [
     "odyzeo",
     "form",
@@ -14,7 +14,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-lib": "vue-cli-service build --target lib --name zeo-form-autocomplete ./src/components/index.js",
+    "build-lib": "vue-cli-service build --target lib --name zeo-form-autocomplete ./src/components/ZeoFormAutocomplete.vue",
     "lint": "vue-cli-service lint"
   },
   "files": [
