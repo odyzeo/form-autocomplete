@@ -67,6 +67,7 @@ import 'zeo-form-autocomplete/dist/zeo-form-autocomplete.css';
 </template>
 ```
 
+```
 <script>
 import ZeoFormAutocomplete from 'zeo-form-autocomplete'
 
@@ -108,5 +109,6 @@ export default {
   },
 };
 </script>
+```
 
 ## Options
