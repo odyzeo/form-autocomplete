@@ -238,11 +238,11 @@ export default {
       }
 
       if (this.clearOnSelect) {
-        this.query = '';
+        this.clear();
       }
 
       if (this.closeOnSelect) {
-        this.$refs.input.blur();
+        this.close();
       }
     },
     onEnter() {
@@ -270,6 +270,7 @@ export default {
     onEsc() {
       this.reset();
       this.clear();
+      this.close();
     },
     onUp() {
       if (this.current > 0) {
@@ -319,6 +320,9 @@ export default {
     },
     clear() {
       this.query = '';
+    },
+    close() {
+      this.$refs.input.blur();
     },
     removeTag(index) {
       const newValue = [...this.selected.slice(0, index), ...this.selected.slice(index + 1)];

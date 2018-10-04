@@ -1,6 +1,6 @@
 {
   "name": "zeo-form-autocomplete",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Odyzeo form autocomplete component with Vue",
   "main": "dist/zeo-form-autocomplete.umd.js",
   "keywords": [
