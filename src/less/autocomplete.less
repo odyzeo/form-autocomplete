@@ -6,7 +6,7 @@
 @input-border-width: 2px;
 
 .input-block {
-  .font(13px, 300);
+  .font(16px, 300);
 
   border-radius: @input-radius;
 }
@@ -153,12 +153,10 @@
 /**
  * <form-autocomplete> with tags
  */
-.input-block--tags {
+.input-block--tags:not(.input-block--tags-filled) {
+
   .input-block__input {
-    padding-top: 0;
-    display: none;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
+    .visually-hidden
   }
 }
 
@@ -169,6 +167,9 @@
   }
 
   .input-block__input {
+    padding-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
     display: block;
   }
 }

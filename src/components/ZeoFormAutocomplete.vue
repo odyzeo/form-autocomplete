@@ -15,10 +15,10 @@
         </slot>
       </div>
 
-      <div
+      <label
         v-if="selected.length > 0"
-        class="input-block__tags"
-        @click="onTagsClick($event)">
+        :for="uid"
+        class="input-block__tags">
         <div
           v-for="(s, i) in selected"
           :key="i"
@@ -32,11 +32,11 @@
           </div>
           <div
             class="input-block__tag-remove"
-            @click="removeTag(i)">
+            @mousedown="removeTag(i)">
             x
           </div>
         </div>
-      </div>
+      </label>
 
       <input
         ref="input"
@@ -216,8 +216,8 @@ export default {
     formErrors() {
       this.showFormErrors = true;
     },
-    filteredItems() {
-      if (this.selectFirst && this.current === -1) {
+    filteredItems(items) {
+      if (items.length > 0 && this.selectFirst && this.current === -1) {
         this.current = 0;
       }
     },
@@ -242,7 +242,7 @@ export default {
       }
 
       if (this.closeOnSelect) {
-        this.clear();
+        this.$refs.input.blur();
       }
     },
     onEnter() {
@@ -305,14 +305,6 @@ export default {
       if (this.query.length === 0) {
         this.removeTag(this.selected.length - 1);
       }
-    },
-    onTagsClick(event) {
-      if (this.focus) return;
-
-      this.onFocus(event);
-      setTimeout(() => {
-        this.$refs.input.focus();
-      });
     },
     updateSearch(event) {
       this.showFormErrors = false;
