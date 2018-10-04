@@ -17,6 +17,10 @@
     "build-lib": "vue-cli-service build --target lib --name zeo-form-autocomplete ./src/components/ZeoFormAutocomplete.vue",
     "lint": "vue-cli-service lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odyzeo/zeo-form-autocomplete.git"
+  },
   "files": [
     "dist/*",
     "src/*",
