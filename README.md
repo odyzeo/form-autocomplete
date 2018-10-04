@@ -112,3 +112,9 @@ export default {
 ```
 
 ## Options
+
+## Development
+
+```bash
+yarn serve
+```
