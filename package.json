@@ -1,8 +1,8 @@
 {
-  "name": "zeo-form-autocomplete",
+  "name": "@dyzeo/form-autocomplete",
   "version": "1.0.7",
   "description": "Odyzeo form autocomplete component with Vue",
-  "main": "dist/zeo-form-autocomplete.umd.js",
+  "main": "dist/form-autocomplete.umd.js",
   "keywords": [
     "odyzeo",
     "form",
@@ -14,12 +14,14 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-lib": "vue-cli-service build --target lib --name zeo-form-autocomplete ./src/components/ZeoFormAutocomplete.vue",
-    "lint": "vue-cli-service lint"
+    "build-lib": "vue-cli-service build --target lib --name form-autocomplete ./src/components/FormAutocomplete.vue",
+    "lint": "vue-cli-service lint",
+    "test:e2e": "vue-cli-service test:e2e",
+    "test:unit": "vue-cli-service test:unit"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/odyzeo/zeo-form-autocomplete.git"
+    "url": "https://github.com/odyzeo/form-autocomplete.git"
   },
   "files": [
     "dist/*",
@@ -29,16 +31,27 @@
     ".js"
   ],
   "dependencies": {
+    "@vue/eslint-config-airbnb": "^4.0.0",
+    "lodash.camelcase": "^4.3.0",
     "normalize.css": "^8.0.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.4",
-    "@vue/cli-plugin-eslint": "^3.0.4",
-    "@vue/cli-service": "^3.0.4",
-    "@vue/eslint-config-airbnb": "^3.0.4",
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-e2e-cypress": "^3.2.0",
+    "@vue/cli-plugin-eslint": "^3.2.1",
+    "@vue/cli-plugin-unit-jest": "^3.2.0",
+    "@vue/cli-service": "^3.2.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/test-utils": "^1.0.0-beta.20",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0-0",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
+    "lint-staged": "^7.2.2",
     "vue-template-compiler": "^2.5.17"
   },
   "eslintConfig": {
@@ -51,7 +64,10 @@
       "@vue/airbnb"
     ],
     "rules": {
-      "no-underscore-dangle": 0
+      "no-underscore-dangle": 0,
+      "vue/attributes-order": 0,
+      "vue/html-self-closing": 0,
+      "vue/no-v-html": 0
     },
     "parserOptions": {
       "parser": "babel-eslint"
@@ -66,5 +82,41 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      "^.+\\.vue$": "vue-jest",
+      ".+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$": "jest-transform-stub",
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "snapshotSerializers": [
+      "jest-serializer-vue"
+    ],
+    "testMatch": [
+      "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
+    ],
+    "testURL": "http://localhost/"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "vue-cli-service lint",
+      "git add"
+    ],
+    "*.vue": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
 }

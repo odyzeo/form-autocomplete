@@ -1,18 +1,55 @@
 <template>
   <div
     id="app"
-    class="app">
+    class="app"
+  >
     <div class="container">
       <h1>Autocomplete</h1>
-      <zeo-form-autocomplete
+      <form-autocomplete
         v-model="selectedItems"
         :label="'Participants'"
         :placeholder="'Type to search'"
         :options="filteredItems"
-        :option-id="'name'"
+        :option-key="'name'"
         :loading="isSearchLoading"
         :hide-selected="true"
-        :close-on-select="false"
+        :select-first="true"
+        @search-change="search"
+      >
+        <template
+          slot="tag"
+          slot-scope="props"
+        >
+          {{ props.item.name }}
+        </template>
+        <template
+          slot="item"
+          slot-scope="props"
+        >
+          {{ props.item.name }}
+        </template>
+        <template slot="no-results">
+          Participants not found
+        </template>
+        <template slot="loading">
+          ...loading...
+        </template>
+      </form-autocomplete>
+      <div>
+        <p>Selected items:</p>
+        <pre>{{ selectedItems }}</pre>
+      </div>
+
+      <h1>Autocomplete</h1>
+      <form-autocomplete
+        v-model="selectedTagItems"
+        :label="'Participants'"
+        :placeholder="'Type to search'"
+        :options="filteredItems"
+        :option-key="'name'"
+        :loading="isSearchLoading"
+        :hide-selected="true"
+        :tags="true"
         :select-first="true"
         @search-change="search"
       >
@@ -32,31 +69,39 @@
         <template slot="loading">
           ...loading...
         </template>
-      </zeo-form-autocomplete>
+      </form-autocomplete>
       <div>
         <p>Selected items:</p>
-        <pre>{{ selectedItems }}</pre>
+        <pre>{{ selectedTagItems }}</pre>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ZeoFormAutocomplete from '@/components/ZeoFormAutocomplete.vue';
+import FormAutocomplete from '@/components/FormAutocomplete.vue';
 
 export default {
   name: 'App',
   components: {
-    ZeoFormAutocomplete,
+    FormAutocomplete,
   },
   data() {
     return {
       selectedItems: [],
+      selectedTagItems: [
+        { name: 'Zombi' },
+      ],
       items: [
         { name: 'Denton' },
         { name: 'Pe4k' },
         { name: 'PaDi' },
         { name: 'Zoli' },
+        { name: 'Zoli' },
+        { name: 'Zoli' },
+        { name: 'Zombi' },
+        { name: 'Zombi' },
+        { name: 'Zombi' },
         { name: 'Zombi' },
       ],
       filteredItems: [],
@@ -76,7 +121,8 @@ export default {
     },
     startSearching(query) {
       this.filteredItems = this.items.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase()));
+        item.name.toLowerCase()
+          .includes(query.toLowerCase()));
       this.isSearchLoading = false;
     },
   },

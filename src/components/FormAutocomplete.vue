@@ -1,87 +1,111 @@
 <template>
   <div
-    :class="['input-block', {
-      'input-block--error': formErrors.length && showFormErrors,
-      'input-block--tags': selected.length > 0,
-      'input-block--tags-filled': selected.length > 0 && focus,
-  }]">
+    class="form-item"
+    :class="{
+      'form-item--filled': !isEmpty,
+      'form-item--error': formErrors.length && showFormErrors,
+      'form-item--tags': tags && selected.length > 0,
+      'form-item--tags-filled': tags && selected.length > 0 && focus,
+    }"
+  >
+    <div class="form-item__field">
+      <slot name="prepend"></slot>
 
-    <div class="input-block__field">
-      <div
-        v-show="loading"
-        class="input-block__loading">
-        <slot name="loading">
-          ...
-        </slot>
+      <div class="form-item__wrapper">
+        <div
+          v-show="loading"
+          class="form-item__loading"
+        >
+          <slot name="loading">
+            ...
+          </slot>
+        </div>
+
+        <label
+          v-if="showTags"
+          :for="uid"
+          class="form-item__tags"
+        >
+          <div
+            v-for="(s, i) in selected"
+            :key="i"
+            class="form-item__tag"
+          >
+            <div class="form-item__tag-text">
+              <slot
+                :item="s"
+                name="tag"
+              >
+                {{ s[optionKey] }}
+              </slot>
+            </div>
+            <div
+              class="form-item__tag-remove"
+              @mousedown="removeTag(i)"
+            >
+              x
+            </div>
+          </div>
+        </label>
+
+        <input
+          ref="input"
+          :disabled="disabled"
+          :id="uid"
+          :placeholder="placeholder"
+          v-model.trim="query"
+          type="text"
+          class="form-item__input form-item__input--autocomplete"
+          autocomplete="off"
+          @focus="onFocus"
+          @blur.prevent="onBlur"
+          @keydown.delete="onDelete"
+          @keydown.down.prevent="onDown"
+          @keydown.up.prevent="onUp"
+          @keydown.enter.prevent="onEnter"
+          @keydown.esc="onEsc"
+          @input="updateSearch($event)"
+        >
+        <label
+          :for="uid"
+          class="form-item__label"
+        >
+          {{ label }}
+        </label>
       </div>
 
-      <label
-        v-if="selected.length > 0"
-        :for="uid"
-        class="input-block__tags">
-        <div
-          v-for="(s, i) in selected"
-          :key="i"
-          class="input-block__tag">
-          <div class="input-block__tag-text">
-            <slot
-              :item="s"
-              name="tag">
-              {{ s.name }}
-            </slot>
-          </div>
-          <div
-            class="input-block__tag-remove"
-            @mousedown="removeTag(i)">
-            x
-          </div>
+      <slot name="append">
+        <div class="form-item__readonly-icon form-item__readonly-icon--right">
+          <span class="icon icon-caret-down"></span>
         </div>
-      </label>
-
-      <input
-        ref="input"
-        :disabled="disabled"
-        :id="uid"
-        :placeholder="placeholder"
-        :value="query"
-        type="text"
-        class="input-block__input input-block__input--autocomplete"
-        autocomplete="off"
-        @focus="onFocus"
-        @blur.prevent="onBlur"
-        @keydown.delete="onDelete"
-        @keydown.down="onDown"
-        @keydown.up="onUp"
-        @keydown.enter.prevent="onEnter"
-        @keydown.esc="onEsc"
-        @input="updateSearch($event)">
-      <label
-        :for="uid"
-        class="input-block__label">
-        {{ label }}
-      </label>
+      </slot>
 
       <ul
         v-show="hasItems && !isEmpty && focus"
         ref="list"
         :style="{ maxHeight: maxHeight + 'px' }"
-        class="input-block__dropdown">
+        class="form-item__dropdown"
+      >
         <li
-          v-for="(item, index) in filteredItems"
-          :class="['input-block__dropdown-item', { 'is-active': activeClass(index) }]"
+          class="form-item__dropdown-item"
+          :class="{ 'is-active': activeClass(index) }"
           :key="index"
-          @mousedown="onClick(index)">
+          v-for="(item, index) in filteredItems"
+          @mousedown="onClick(index)"
+        >
           <slot
             :item="item"
-            name="item">
-            {{ item.name }}
+            name="item"
+          >
+            {{ item[optionKey] }}
           </slot>
         </li>
       </ul>
       <ul
         v-if="showNoResults"
-        class="input-block__dropdown input-block__dropdown--no-results">
-        <li class="input-block__dropdown-item">
+        class="form-item__dropdown form-item__dropdown--no-results"
+      >
+        <li class="form-item__dropdown-item">
           <slot name="no-results">
             No results found
           </slot>
@@ -93,8 +117,9 @@
       <div
         v-for="(error, index) in formErrors"
         :key="index"
-        class="input-block__error"
-        v-html="error"/>
+        class="form-item__error"
+        v-html="error"
+      ></div>
     </div>
   </div>
 </template>
@@ -108,32 +133,26 @@ export default {
   props: {
     optionHeight: {
       type: Number,
-      required: false,
-      default: 42,
+      default: 38,
     },
     maxHeight: {
       type: Number,
-      required: false,
-      default: 209,
+      default: 190,
     },
     label: {
       type: String,
-      required: false,
       default: '',
     },
     placeholder: {
       type: String,
-      required: false,
       default: '',
     },
     loading: {
       type: Boolean,
-      required: false,
       default: false,
     },
     disabled: {
       type: Boolean,
-      required: false,
       default: false,
     },
     clearOnSelect: {
@@ -148,10 +167,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    multiple: {
-      type: Boolean,
-      default: true,
-    },
     value: {
       type: null,
       default() {
@@ -162,32 +177,41 @@ export default {
       type: Array,
       required: true,
     },
-    optionId: {
+    optionKey: {
       type: String,
-      required: false,
       default: 'name',
     },
     formErrors: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
     },
     selectFirst: {
       type: Boolean,
       default: false,
     },
+    tags: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
+    let query = '';
+
+    if (!this.tags && Array.isArray(this.value) && this.value.length > 0) {
+      query = this.value[0][this.optionKey];
+    }
+
     return {
       current: -1,
       focus: false,
-      query: '',
+      query,
       visibleElements: this.maxHeight / this.optionHeight,
       showFormErrors: false,
     };
   },
   computed: {
     uid() {
-      return `input-block-${this._uid}`;
+      return `form-item-${this._uid}`;
     },
     selected() {
       return Array.isArray(this.value) ? this.value : [this.value];
@@ -203,13 +227,17 @@ export default {
       return options;
     },
     isEmpty() {
-      return this.query.trim() === '';
+      return this.query === ''
+        && (!this.tags || (this.tags && this.selected.length > 0));
     },
     pointerPosition() {
       return this.current * this.optionHeight;
     },
     showNoResults() {
       return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
+    },
+    showTags() {
+      return this.tags && this.selected.length > 0;
     },
   },
   watch: {
@@ -219,6 +247,8 @@ export default {
     filteredItems(items) {
       if (items.length > 0 && this.selectFirst && this.current === -1) {
         this.current = 0;
+      } else {
+        this.current = -1;
       }
     },
   },
@@ -231,14 +261,16 @@ export default {
   },
   methods: {
     onSelect(item) {
-      if (this.multiple) {
+      if (this.tags) {
         this.$emit('input', [...this.selected, item]);
       } else {
         this.$emit('input', [item]);
       }
 
-      if (this.clearOnSelect) {
+      if (this.tags && this.clearOnSelect) {
         this.clear();
+      } else {
+        this.query = item[this.optionKey];
       }
 
       if (this.closeOnSelect) {
@@ -256,7 +288,19 @@ export default {
     },
     onBlur() {
       this.reset();
-      this.clear();
+      if (this.tags) {
+        this.clear();
+      } else {
+        setTimeout(() => {
+          if (this.isEmpty) {
+            this.$emit('input', []);
+          } else {
+            // Always last value, do not enable user to enter non existing value
+            // Not working in safari
+            // this.query = this.value.length > 0 ? this.value[0][this.optionKey] : '';
+          }
+        });
+      }
       this.focus = false;
     },
     onClick(index) {
@@ -269,7 +313,9 @@ export default {
     },
     onEsc() {
       this.reset();
-      this.clear();
+      if (this.tags) {
+        this.clear();
+      }
       this.close();
     },
     onUp() {
@@ -295,11 +341,11 @@ export default {
       }
 
       if (
-        this.$refs.list.scrollTop <=
-        this.pointerPosition - (this.visibleElements * this.optionHeight)
+        this.$refs.list.scrollTop <= this.pointerPosition
+        - (this.visibleElements * this.optionHeight)
       ) {
-        this.$refs.list.scrollTop =
-          this.pointerPosition - ((this.visibleElements - 1) * this.optionHeight);
+        this.$refs.list.scrollTop = this.pointerPosition
+          - ((this.visibleElements - 1) * this.optionHeight);
       }
     },
     onDelete() {
@@ -307,9 +353,8 @@ export default {
         this.removeTag(this.selected.length - 1);
       }
     },
-    updateSearch(event) {
+    updateSearch() {
       this.showFormErrors = false;
-      this.query = event.target.value.trim();
       this.$emit('search-change', this.query);
     },
     activeClass(index) {
@@ -336,5 +381,5 @@ export default {
 </script>
 
 <style lang="less">
-@import '../../src/less/autocomplete.less';
+@import '../less/form-autocomplete.less';
 </style>

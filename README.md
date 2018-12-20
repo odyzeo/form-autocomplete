@@ -7,35 +7,38 @@ Simple autocomplete Vue.js component.
 ### npm
 
 ```
-npm install --save zeo-form-autocomplete
+npm install --save @odyzeo/form-autocomplete
 ```
 
 ### yarn
 
 ```
-yarn add zeo-form-autocomplete
+yarn add @odyzeo/form-autocomplete
 ```
 
 Import component in your where you want to use it and register it:
 
 ```
-import 'Autocomplete' from 'zeo-form-autocomplete';
+import 'FormAutocomplete' from 'form-autocomplete';
 export default {
-  components: { Autocomplete },
+  components: {
+    FormAutocomplete,
+  },
 }
 ```
 
 Import styles or make your own.
 
 ```
-import 'zeo-form-autocomplete/dist/zeo-form-autocomplete.css';
+import 'form-autocomplete/dist/form-autocomplete.css';
 ```
 
 ## Usage
 
 ```
 <template>
-  <zeo-form-autocomplete
+  <h1>Autocomplete - single</h1>
+  <form-autocomplete
     v-model="selectedItems"
     :label="'Participants'"
     :placeholder="'Type to search'"
@@ -43,7 +46,39 @@ import 'zeo-form-autocomplete/dist/zeo-form-autocomplete.css';
     :option-id="'name'"
     :loading="isSearchLoading"
     :hide-selected="true"
-    :close-on-select="false"
+    :select-first="true"
+    @search-change="search"
+  >
+    <template
+      slot="tag"
+      slot-scope="props"
+    >
+      {{ props.item.name }}
+    </template>
+    <template
+      slot="item"
+      slot-scope="props"
+    >
+      {{ props.item.name }}
+    </template>
+    <template slot="no-results">
+      Participants not found
+    </template>
+    <template slot="loading">
+      ...loading...
+    </template>
+  </form-autocomplete>
+  
+  <h1>Autocomplete - tags</h1>
+  <form-autocomplete
+    v-model="selectedTagItems"
+    :label="'Participants'"
+    :placeholder="'Type to search'"
+    :options="filteredItems"
+    :option-id="'name'"
+    :loading="isSearchLoading"
+    :hide-selected="true"
+    :tags="true"
     :select-first="true"
     @search-change="search"
   >
@@ -63,22 +98,25 @@ import 'zeo-form-autocomplete/dist/zeo-form-autocomplete.css';
     <template slot="loading">
       ...loading...
     </template>
-  </zeo-form-autocomplete>
+  </form-autocomplete>
 </template>
 ```
 
 ```
 <script>
-import ZeoFormAutocomplete from 'zeo-form-autocomplete'
+import FormAutocomplete from 'form-autocomplete'
 
 export default {
   name: 'App',
   components: {
-    ZeoFormAutocomplete,
+    FormAutocomplete,
   },
   data() {
     return {
       selectedItems: [],
+      selectedTagItems: [
+        { name: 'Zombi' },
+      ],
       items: [
         { name: 'Denton' },
         { name: 'Pe4k' },
@@ -103,7 +141,8 @@ export default {
     },
     startSearching(query) {
       this.filteredItems = this.items.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase()));
+        item.name.toLowerCase()
+          .includes(query.toLowerCase()));
       this.isSearchLoading = false;
     },
   },
@@ -111,10 +150,35 @@ export default {
 </script>
 ```
 
-## Options
+## Props
+
+| Property name | Type | Default value | Description |
+| ------------- | ---- | ------------- | ----------- |
+| `optionHeight` | number | `38` | Single option height |
+| `maxHeight` | number | `190` | Dropdown options max height |
+| `label` | string | `''` | Label name for input |
+| `placeholder` | string | | Input `placeholer` attribute |
+| `loading` | boolean | `false` | Show loading indicator |
+| `disabled` | boolean | `false` | Set disabled input |
+| `clearOnSelect` | boolean | `true` | Clear input on select |
+| `closeOnSelect` | boolean | `true` | Hide dropdown on select |
+| `hideSelected` | boolean | `true` | Hide selected values from dropdown options |
+| `value` | array | `[]` | Array of initial selected option(s) |
+| `options` | array | `[]` | Array of options to display |
+| `optionKey` | string | `name` | Name of the object key to get value displayed in dropdown |
+| `formErrors` | array | `[]` | Array of errors to display |
+| `selectFirst` | boolean | `false` | Whether to auto select first value from dropdown options |
+| `tags` | boolean | `false` | Whether to select multiple options - tags |
 
 ## Development
+
+```
+npm run serve
+```
+
+or
 
 ```bash
 yarn serve
 ```
+
