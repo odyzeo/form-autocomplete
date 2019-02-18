@@ -80,27 +80,31 @@
         </div>
       </slot>
 
-      <ul
-        v-show="hasItems && !isEmpty && focus"
-        ref="list"
-        :style="{ maxHeight: maxHeight + 'px' }"
-        class="form-item__dropdown"
-      >
-        <li
-          class="form-item__dropdown-item"
-          :class="{ 'is-active': activeClass(index) }"
-          :key="index"
-          v-for="(item, index) in filteredItems"
-          @mousedown="onClick(index)"
+      <transition :name="transitionName">
+        <ul
+          v-show="hasItems && !isEmpty && focus"
+          ref="list"
+          :style="{ maxHeight: (limitMaxHeight ? `${maxHeight}px` : '') }"
+          class="form-item__dropdown"
         >
-          <slot
-            :item="item"
-            name="item"
+          <li
+            v-for="(item, index) in filteredItems"
+            class="form-item__dropdown-item"
+            :class="{ 'is-active': activeClass(index) }"
+            :key="item.id || index"
+            @mousedown="onClick(item, index)"
           >
-            {{ item[optionKey] }}
+            <slot
+              :item="item"
+              name="item"
+            >
+              {{ item[optionKey] }}
+            </slot>
+          </li>
+          <slot name="after-list">
           </slot>
-        </li>
-      </ul>
+        </ul>
+      </transition>
       <ul
         v-if="showNoResults"
         class="form-item__dropdown form-item__dropdown--no-results"
@@ -193,6 +197,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    transitionName: {
+      type: String,
+      default: 'fade',
+    },
+    limitMaxHeight: {
+      type: Boolean,
+      default: true,
+    },
+    openLinkOnClick: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     let query = '';
@@ -247,7 +263,11 @@ export default {
     filteredItems(items) {
       if (items.length > 0 && this.selectFirst && this.current === -1) {
         this.current = 0;
-      } else {
+      } else if (items.length < (this.current - 1) && items.length > 0) {
+        this.current = 0;
+      } else if (items.length < (this.current - 1) && items.length === 0) {
+        this.current = -1;
+      } else if (items.length === 0) {
         this.current = -1;
       }
     },
@@ -278,6 +298,10 @@ export default {
       }
     },
     onEnter() {
+      if (this.openLinkOnClick && this.current !== -1 && this.filteredItems[this.current].url) {
+        window.location = this.filteredItems[this.current].url;
+        return;
+      }
       if (this.current !== -1) {
         this.onSelect(this.filteredItems[this.current]);
         this.reset();
@@ -303,7 +327,11 @@ export default {
       }
       this.focus = false;
     },
-    onClick(index) {
+    onClick(item, index) {
+      if (this.openLinkOnClick && item.url) {
+        window.location = item.url;
+        return;
+      }
       this.current = index;
 
       if (this.current !== -1) {
@@ -319,30 +347,29 @@ export default {
       this.close();
     },
     onUp() {
+      if (!this.hasItems) return;
       if (this.current > 0) {
         this.current -= 1;
-      } else if (this.current === -1) {
-        // this.current = this.filteredItems.length - 1
-      } else if (this.current === 0) {
-        // this.current = this.filteredItems.length - 1
+      } else if (this.current <= 0) {
+        this.current = this.filteredItems.length - 1;
       } else {
         this.current = 0;
       }
 
-      if (this.$refs.list.scrollTop >= this.pointerPosition) {
-        this.$refs.list.scrollTop = this.pointerPosition;
-      }
+      this.$refs.list.scrollTop = this.pointerPosition;
     },
     onDown() {
+      if (!this.hasItems) return;
       if (this.current < this.filteredItems.length - 1) {
         this.current += 1;
       } else {
-        // this.current = 0
+        this.current = 0;
       }
 
       if (
         this.$refs.list.scrollTop <= this.pointerPosition
         - (this.visibleElements * this.optionHeight)
+        || this.$refs.list.scrollTop > this.pointerPosition
       ) {
         this.$refs.list.scrollTop = this.pointerPosition
           - ((this.visibleElements - 1) * this.optionHeight);

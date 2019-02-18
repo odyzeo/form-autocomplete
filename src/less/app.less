@@ -18,7 +18,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
 }
@@ -49,4 +48,52 @@ h1 {
     max-width: @dashboard--container-width;
     padding: 0 @tablet-container-padding;
   }
+}
+
+.search-item__more {
+  flex: 1 0 auto;
+
+  display: flex;
+  justify-content: center;
+  text-align: center;
+
+  .font(14px, 600);
+}
+
+.search-item__more-link {
+  color: @color--primary;
+  text-decoration: underline;
+}
+
+.search-item__more-number {
+  color: @color--primary;
+}
+
+.search-item__left {
+  width: 75px;
+  margin-right: 20px;
+}
+
+.search-item__title {
+  margin-bottom: 5px;
+  color: @color--primary;
+  .font(12px, 600);
+  line-height: 1.5;
+  text-decoration: underline;
+}
+
+.search-item__price,
+.search-item__code {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.search-item__price {
+  color: @color--default;
+  font-weight: 700;
+}
+
+.search-item__code {
+  color: @color--default;
+  font-weight: 600;
 }

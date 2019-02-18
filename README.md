@@ -68,7 +68,7 @@ import 'form-autocomplete/dist/form-autocomplete.css';
       ...loading...
     </template>
   </form-autocomplete>
-  
+
   <h1>Autocomplete - tags</h1>
   <form-autocomplete
     v-model="selectedTagItems"
@@ -169,6 +169,32 @@ export default {
 | `formErrors` | array | `[]` | Array of errors to display |
 | `selectFirst` | boolean | `false` | Whether to auto select first value from dropdown options |
 | `tags` | boolean | `false` | Whether to select multiple options - tags |
+| `transitionName` | string | `fade` | Name of css transition class |
+| `limitMaxHeight` | boolean | `true` | If results dropdown should have max-height, set to false if you limit amout of your results in your backend/api |
+| `openLinkOnClick` | boolean | `false` | If user should be redirected on click/enter, url param on item/object is required |
+
+## Slots
+### prepend
+Div block before input element, use it to display an icon
+
+### append
+Div block after input element, use it to display an icon
+
+### loading
+What to display while loading, if loading prop is true
+
+### tag
+How a tag should look
+
+### item
+How a dropdown item should look
+
+### no-results
+Text to display if nothing if there are no results
+
+### after-list
+Use this to display some more information after the dropdown with results
+
 
 ## Development
 

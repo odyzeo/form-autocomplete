@@ -4,63 +4,88 @@
     class="app"
   >
     <div class="container">
-      <h1>Autocomplete</h1>
+      <h1>Demo 1</h1>
+      <p>Using autocomplete as search with rerouting user to url of found item</p>
       <form-autocomplete
-        v-model="selectedItems"
-        :label="'Participants'"
+        :label="'Product name'"
         :placeholder="'Type to search'"
-        :options="filteredItems"
+        :options="filteredProducts"
         :option-key="'name'"
         :loading="isSearchLoading"
         :hide-selected="true"
         :select-first="true"
-        @search-change="search"
+        :limit-max-height="false"
+        :open-link-on-click="true"
+        @search-change="searchProduct"
       >
-        <template
-          slot="tag"
-          slot-scope="props"
-        >
-          {{ props.item.name }}
-        </template>
         <template
           slot="item"
           slot-scope="props"
         >
-          {{ props.item.name }}
+          <div class="search-item__left">
+            <img
+              :src="props.item.image"
+              class="search-item__image"
+            >
+          </div>
+
+          <div class="search-item__right">
+            <div class="search-item__title">
+              <a :href="props.item.url">{{ props.item.name }}</a>
+            </div>
+            <div
+              class="search-item__price"
+            >
+              Price: {{ props.item.price }} &euro;
+            </div>
+            <div class="search-item__code">
+              Product Code: {{ props.item.code }}
+            </div>
+          </div>
         </template>
-        <template slot="no-results">
-          Participants not found
+        <template v-slot:no-results>
+          Nothing found
         </template>
-        <template slot="loading">
+        <template v-slot:loading>
           ...loading...
         </template>
+        <template v-slot:after-list>
+          <a
+            v-if="linkToAllResults"
+            :href="linkToAllResults.link"
+            class="form-item__dropdown-item"
+          >
+            <div class="search-item__more">
+              <span class="search-item__more-link">
+                {{ linkToAllResults.text }}
+              </span>
+            </div>
+          </a>
+        </template>
       </form-autocomplete>
-      <div>
-        <p>Selected items:</p>
-        <pre>{{ selectedItems }}</pre>
-      </div>
 
-      <h1>Autocomplete</h1>
+      <h1>Demo 2</h1>
+      <p>Using autocomplete for searching and selecting multiple items/tags</p>
       <form-autocomplete
-        v-model="selectedTagItems"
+        v-model="selectedPeople"
         :label="'Participants'"
         :placeholder="'Type to search'"
-        :options="filteredItems"
+        :options="filteredPeople"
         :option-key="'name'"
         :loading="isSearchLoading"
         :hide-selected="true"
         :tags="true"
         :select-first="true"
-        @search-change="search"
+        @search-change="searchPeople"
       >
         <template
-          slot="tag"
-          slot-scope="props">
+          v-slot:tag="props"
+        >
           {{ props.item.name }}
         </template>
         <template
-          slot="item"
-          slot-scope="props">
+          v-slot:item="props"
+        >
           {{ props.item.name }}
         </template>
         <template slot="no-results">
@@ -72,7 +97,7 @@
       </form-autocomplete>
       <div>
         <p>Selected items:</p>
-        <pre>{{ selectedTagItems }}</pre>
+        <pre>{{ selectedPeople }}</pre>
       </div>
     </div>
   </div>
@@ -80,6 +105,7 @@
 
 <script>
 import FormAutocomplete from '@/components/FormAutocomplete.vue';
+import products from './data/products';
 
 export default {
   name: 'App',
@@ -88,41 +114,60 @@ export default {
   },
   data() {
     return {
-      selectedItems: [],
-      selectedTagItems: [
-        { name: 'Zombi' },
+      selectedPeople: [
+        { name: 'Zombi 1' },
       ],
-      items: [
+      people: [
         { name: 'Denton' },
         { name: 'Pe4k' },
         { name: 'PaDi' },
-        { name: 'Zoli' },
-        { name: 'Zoli' },
-        { name: 'Zoli' },
-        { name: 'Zombi' },
-        { name: 'Zombi' },
-        { name: 'Zombi' },
-        { name: 'Zombi' },
+        { name: 'Zoli 1' },
+        { name: 'Zoli 2' },
+        { name: 'Zoli 3' },
+        { name: 'Zombi 1' },
+        { name: 'Zombi 2' },
+        { name: 'Zombi 3' },
+        { name: 'Zombi 4' },
       ],
-      filteredItems: [],
+      products,
+      filteredPeople: [],
+      filteredProducts: [],
       isSearchLoading: false,
+      linkToAllResults: {
+        link: 'http://www.google.com',
+        text: 'Show all results (42)',
+      },
     };
   },
   methods: {
-    search(query) {
-      this.filteredItems = [];
+    searchProduct(query) {
+      this.filteredProducts = [];
       this.isSearchLoading = true;
 
       if (query.length < this.minSearchLength) {
         return;
       }
 
-      this.startSearching(query);
+      this.startSearchingProducts(query);
     },
-    startSearching(query) {
-      this.filteredItems = this.items.filter(item =>
-        item.name.toLowerCase()
-          .includes(query.toLowerCase()));
+    searchPeople(query) {
+      this.filteredPeople = [];
+      this.isSearchLoading = true;
+
+      if (query.length < this.minSearchLength) {
+        return;
+      }
+
+      this.startSearchingPeople(query);
+    },
+    startSearchingPeople(query) {
+      this.filteredPeople = this.people.filter(item => item.name.toLowerCase()
+        .includes(query.toLowerCase()));
+      this.isSearchLoading = false;
+    },
+    startSearchingProducts(query) {
+      this.filteredProducts = this.products.filter(item => item.name.toLowerCase()
+        .includes(query.toLowerCase()));
       this.isSearchLoading = false;
     },
   },
