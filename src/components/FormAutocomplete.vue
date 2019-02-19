@@ -62,7 +62,7 @@
           @keydown.delete="onDelete"
           @keydown.down.prevent="onDown"
           @keydown.up.prevent="onUp"
-          @keydown.enter.prevent="onEnter"
+          @keydown.enter.prevent="selectCurrent"
           @keydown.esc="onEsc"
           @input="updateSearch($event)"
         >
@@ -81,18 +81,19 @@
       </slot>
 
       <transition :name="transitionName">
-        <ul
-          v-show="hasItems && !isEmpty && focus"
+        <div
+          v-show="showDropdown"
           ref="list"
           :style="{ maxHeight: (limitMaxHeight ? `${maxHeight}px` : '') }"
           class="form-item__dropdown"
         >
-          <li
+          <div
             v-for="(item, index) in filteredItems"
             class="form-item__dropdown-item"
             :class="{ 'is-active': activeClass(index) }"
             :key="item.id || index"
-            @mousedown="onClick(item, index)"
+            @mousedown="selectCurrent()"
+            @mouseover="current = index"
           >
             <slot
               :item="item"
@@ -100,10 +101,10 @@
             >
               {{ item[optionKey] }}
             </slot>
-          </li>
+          </div>
           <slot name="after-list">
           </slot>
-        </ul>
+        </div>
       </transition>
       <ul
         v-if="showNoResults"
@@ -205,10 +206,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    openLinkOnClick: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     let query = '';
@@ -248,6 +245,9 @@ export default {
     },
     pointerPosition() {
       return this.current * this.optionHeight;
+    },
+    showDropdown() {
+      return this.hasItems && !this.isEmpty && this.focus;
     },
     showNoResults() {
       return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
@@ -297,12 +297,9 @@ export default {
         this.close();
       }
     },
-    onEnter() {
-      if (this.openLinkOnClick && this.current !== -1 && this.filteredItems[this.current].url) {
-        window.location = this.filteredItems[this.current].url;
-        return;
-      }
+    selectCurrent() {
       if (this.current !== -1) {
+        this.$emit('selected', this.filteredItems[this.current]);
         this.onSelect(this.filteredItems[this.current]);
         this.reset();
       }
@@ -327,18 +324,6 @@ export default {
       }
       this.focus = false;
     },
-    onClick(item, index) {
-      if (this.openLinkOnClick && item.url) {
-        window.location = item.url;
-        return;
-      }
-      this.current = index;
-
-      if (this.current !== -1) {
-        this.onSelect(this.filteredItems[this.current]);
-        this.reset();
-      }
-    },
     onEsc() {
       this.reset();
       if (this.tags) {
@@ -354,6 +339,13 @@ export default {
         this.current = this.filteredItems.length - 1;
       } else {
         this.current = 0;
+      }
+
+      if (
+        this.$refs.list.scrollTop < this.pointerPosition
+        && (this.$refs.list.scrollTop + this.maxHeight - this.optionHeight) > this.pointerPosition
+      ) {
+        return;
       }
 
       this.$refs.list.scrollTop = this.pointerPosition;

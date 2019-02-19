@@ -15,41 +15,38 @@
         :hide-selected="true"
         :select-first="true"
         :limit-max-height="false"
-        :open-link-on-click="true"
+        @selected="openLink($event)"
         @search-change="searchProduct"
       >
-        <template
-          slot="item"
-          slot-scope="props"
-        >
+        <template #item="{ item }">
           <div class="search-item__left">
             <img
-              :src="props.item.image"
+              :src="item.image"
               class="search-item__image"
             >
           </div>
 
           <div class="search-item__right">
             <div class="search-item__title">
-              <a :href="props.item.url">{{ props.item.name }}</a>
+              <a :href="item.url">{{ item.name }}</a>
             </div>
             <div
               class="search-item__price"
             >
-              Price: {{ props.item.price }} &euro;
+              Price: {{ item.price }} &euro;
             </div>
             <div class="search-item__code">
-              Product Code: {{ props.item.code }}
+              Product Code: {{ item.code }}
             </div>
           </div>
         </template>
-        <template v-slot:no-results>
+        <template #no-results>
           Nothing found
         </template>
-        <template v-slot:loading>
+        <template #loading>
           ...loading...
         </template>
-        <template v-slot:after-list>
+        <template #after-list>
           <a
             v-if="linkToAllResults"
             :href="linkToAllResults.link"
@@ -79,19 +76,19 @@
         @search-change="searchPeople"
       >
         <template
-          v-slot:tag="props"
+          #tag="{ item }"
         >
-          {{ props.item.name }}
+          {{ item.name }}
         </template>
         <template
-          v-slot:item="props"
+          #item="{ item }"
         >
-          {{ props.item.name }}
+          {{ item.name }}
         </template>
-        <template slot="no-results">
+        <template #no-results>
           Participants not found
         </template>
-        <template slot="loading">
+        <template #loading>
           ...loading...
         </template>
       </form-autocomplete>
@@ -140,6 +137,9 @@ export default {
     };
   },
   methods: {
+    openLink(item) {
+      window.location = item.url;
+    },
     searchProduct(query) {
       this.filteredProducts = [];
       this.isSearchLoading = true;

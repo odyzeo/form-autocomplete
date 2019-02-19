@@ -171,7 +171,6 @@ export default {
 | `tags` | boolean | `false` | Whether to select multiple options - tags |
 | `transitionName` | string | `fade` | Name of css transition class |
 | `limitMaxHeight` | boolean | `true` | If results dropdown should have max-height, set to false if you limit amout of your results in your backend/api |
-| `openLinkOnClick` | boolean | `false` | If user should be redirected on click/enter, url param on item/object is required |
 
 ## Slots
 ### prepend
