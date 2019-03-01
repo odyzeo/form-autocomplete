@@ -5,7 +5,9 @@
   >
     <div class="container">
       <h1>Demo 1</h1>
+
       <p>Using autocomplete as search with rerouting user to url of found item</p>
+
       <form-autocomplete
         :label="'Product name'"
         :placeholder="'Type to search'"
@@ -28,24 +30,31 @@
 
           <div class="search-item__right">
             <div class="search-item__title">
-              <a :href="item.url">{{ item.name }}</a>
+              <a :href="item.url">
+                {{ item.name }}
+              </a>
             </div>
+
             <div
               class="search-item__price"
             >
               Price: {{ item.price }} &euro;
             </div>
+
             <div class="search-item__code">
               Product Code: {{ item.code }}
             </div>
           </div>
         </template>
+
         <template #no-results>
           Nothing found
         </template>
+
         <template #loading>
           ...loading...
         </template>
+
         <template #after-list>
           <a
             v-if="linkToAllResults"
@@ -62,7 +71,9 @@
       </form-autocomplete>
 
       <h1>Demo 2</h1>
+
       <p>Using autocomplete for searching and selecting multiple items/tags</p>
+
       <form-autocomplete
         v-model="selectedPeople"
         :label="'Participants'"
@@ -72,7 +83,6 @@
         :loading="isSearchLoading"
         :hide-selected="true"
         :tags="true"
-        :select-first="true"
         @search-change="searchPeople"
       >
         <template
@@ -80,20 +90,25 @@
         >
           {{ item.name }}
         </template>
+
         <template
           #item="{ item }"
         >
           {{ item.name }}
         </template>
+
         <template #no-results>
           Participants not found
         </template>
+
         <template #loading>
           ...loading...
         </template>
       </form-autocomplete>
+
       <div>
         <p>Selected items:</p>
+
         <pre>{{ selectedPeople }}</pre>
       </div>
     </div>
@@ -141,20 +156,22 @@ export default {
       window.location = item.url;
     },
     searchProduct(query) {
-      this.filteredProducts = [];
       this.isSearchLoading = true;
 
-      if (query.length < this.minSearchLength) {
+      if (query.length < this.minSearchLength || query === '') {
+        this.isSearchLoading = false;
+
         return;
       }
 
       this.startSearchingProducts(query);
     },
     searchPeople(query) {
-      this.filteredPeople = [];
       this.isSearchLoading = true;
 
-      if (query.length < this.minSearchLength) {
+      if (query.length < this.minSearchLength || query === '') {
+        this.isSearchLoading = false;
+
         return;
       }
 

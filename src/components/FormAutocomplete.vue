@@ -1,3 +1,10 @@
+<!--TODO: Current issues-->
+<!-- - <DISCUSSION> In case where there is tag already selected, the empty input does not show all the results-->
+<!-- - <DISCUSSION> add data prop to force results container to show all data items-->
+<!-- - <FIXED> Also when results are shown, and input is erased all results will be shown during transition leave-->
+<!-- - <FIXED> Possible Label issue in tag mode -->
+<!-- - Maybe add highlighter when removing tags; so it-->
+
 <template>
   <div
     class="form-item"
@@ -240,14 +247,13 @@ export default {
       return options;
     },
     isEmpty() {
-      return this.query === ''
-        && (!this.tags || (this.tags && this.selected.length > 0));
+      return this.query === '';
     },
     pointerPosition() {
       return this.current * this.optionHeight;
     },
     showDropdown() {
-      return this.hasItems && !this.isEmpty && this.focus;
+      return this.focus && this.hasItems && !this.isEmpty;
     },
     showNoResults() {
       return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
