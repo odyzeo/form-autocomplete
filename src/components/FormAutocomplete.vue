@@ -31,12 +31,14 @@
         <label
           v-if="showTags"
           :for="uid"
+          :key="specialId"
           class="form-item__tags"
         >
           <div
-            v-for="(s, i) in selected"
+            v-for="(s, i) in localValue"
             :key="i"
             class="form-item__tag"
+            :class="{'is-active': s.active}"
           >
             <div class="form-item__tag-text">
               <slot
@@ -227,6 +229,8 @@ export default {
       query,
       visibleElements: this.maxHeight / this.optionHeight,
       showFormErrors: false,
+      localValue: this.value,
+      specialId: this._uid,
     };
   },
   computed: {
@@ -234,7 +238,7 @@ export default {
       return `form-item-${this._uid}`;
     },
     selected() {
-      return Array.isArray(this.value) ? this.value : [this.value];
+      return Array.isArray(this.localValue) ? this.localValue : [this.localValue];
     },
     hasItems() {
       return this.filteredItems.length > 0;
@@ -277,6 +281,9 @@ export default {
         this.current = -1;
       }
     },
+    value(value) {
+      this.localValue = value;
+    },
   },
   mounted() {
     document.addEventListener('click', (e) => {
@@ -304,9 +311,12 @@ export default {
       }
     },
     selectCurrent() {
+      const currentItem = this.filteredItems[this.current];
+
       if (this.current !== -1) {
-        this.$emit('selected', this.filteredItems[this.current]);
-        this.onSelect(this.filteredItems[this.current]);
+        this.$emit('selected', currentItem);
+
+        this.onSelect(currentItem);
         this.reset();
       }
     },
@@ -315,8 +325,13 @@ export default {
     },
     onBlur() {
       this.reset();
-      if (this.tags) {
+
+      if (this.clearOnSelect) {
         this.clear();
+      }
+
+      if (this.tags) {
+        this.resetActiveTags();
       } else {
         setTimeout(() => {
           if (this.isEmpty) {
@@ -328,17 +343,21 @@ export default {
           }
         });
       }
+
       this.focus = false;
     },
     onEsc() {
       this.reset();
+
       if (this.tags) {
         this.clear();
       }
+
       this.close();
     },
     onUp() {
       if (!this.hasItems) return;
+
       if (this.current > 0) {
         this.current -= 1;
       } else if (this.current <= 0) {
@@ -358,6 +377,7 @@ export default {
     },
     onDown() {
       if (!this.hasItems) return;
+
       if (this.current < this.filteredItems.length - 1) {
         this.current += 1;
       } else {
@@ -375,11 +395,16 @@ export default {
     },
     onDelete() {
       if (this.query.length === 0) {
-        this.removeTag(this.selected.length - 1);
+        this.removeTag(this.selected.length - 1, true);
       }
     },
     updateSearch() {
       this.showFormErrors = false;
+
+      if (this.tags) {
+        this.resetActiveTags();
+      }
+
       this.$emit('search-change', this.query);
     },
     activeClass(index) {
@@ -394,12 +419,29 @@ export default {
     close() {
       this.$refs.input.blur();
     },
-    removeTag(index) {
-      const newValue = [...this.selected.slice(0, index), ...this.selected.slice(index + 1)];
+    removeTag(index, keypress) {
+      if (keypress && !this.localValue[index].active) {
+        this.localValue[index].active = true;
+        this.randomizeId();
+
+        return;
+      }
+
+      this.resetActiveTags();
+
+      const newValue = [...this.localValue.slice(0, index), ...this.localValue.slice(index + 1)];
       this.$emit('input', newValue);
     },
     isSelected(option) {
       return this.selected.findIndex(s => JSON.stringify(s) === JSON.stringify(option)) > -1;
+    },
+    randomizeId() {
+      this.specialId = `${this._uid}-${Math.random()}`;
+    },
+    resetActiveTags() {
+      this.localValue.forEach((item) => {
+        delete item.active;
+      });
     },
   },
 };

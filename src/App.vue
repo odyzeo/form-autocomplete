@@ -81,8 +81,9 @@
         :options="filteredPeople"
         :option-key="'name'"
         :loading="isSearchLoading"
-        :hide-selected="true"
         :tags="true"
+        :clear-on-select="false"
+        :close-on-select="false"
         @search-change="searchPeople"
       >
         <template
