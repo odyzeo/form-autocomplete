@@ -1,6 +1,6 @@
 <!--TODO: Current issues-->
-<!-- - <DISCUSSION> In case where there is tag already selected, the empty input does not show all the results-->
-<!-- - <DISCUSSION> add data prop to force results container to show all data items-->
+<!-- - <NEEDED DISCUSSION> In case where there is tag already selected, the empty input does not show all the results-->
+<!-- - <NEEDED DISCUSSION> add data prop to force results container to show all data items-->
 <!-- - <FIXED> Also when results are shown, and input is erased all results will be shown during transition leave-->
 <!-- - <FIXED> Possible Label issue in tag mode -->
 <!-- - Maybe add highlighter when removing tags; so it-->
@@ -215,6 +215,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    confirmTagRemoval: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     let query = '';
@@ -420,14 +424,16 @@ export default {
       this.$refs.input.blur();
     },
     removeTag(index, keypress) {
-      if (keypress && !this.localValue[index].active) {
-        this.localValue[index].active = true;
-        this.randomizeId();
+      if (this.confirmTagRemoval) {
+        if (keypress && !this.localValue[index].active) {
+          this.localValue[index].active = true;
+          this.randomizeId();
 
-        return;
+          return;
+        }
+
+        this.resetActiveTags();
       }
-
-      this.resetActiveTags();
 
       const newValue = [...this.localValue.slice(0, index), ...this.localValue.slice(index + 1)];
       this.$emit('input', newValue);
@@ -439,9 +445,11 @@ export default {
       this.specialId = `${this._uid}-${Math.random()}`;
     },
     resetActiveTags() {
-      this.localValue.forEach((item) => {
-        delete item.active;
-      });
+      if (this.confirmTagRemoval) {
+        this.localValue.forEach((item) => {
+          delete item.active;
+        });
+      }
     },
   },
 };

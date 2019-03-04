@@ -9,14 +9,13 @@
       <p>Using autocomplete as search with rerouting user to url of found item</p>
 
       <form-autocomplete
-        :label="'Product name'"
         :placeholder="'Type to search'"
         :options="filteredProducts"
         :option-key="'name'"
         :loading="isSearchLoading"
-        :hide-selected="true"
-        :select-first="true"
         :limit-max-height="false"
+        select-first
+        hide-selected
         @selected="openLink($event)"
         @search-change="searchProduct"
       >
@@ -76,14 +75,13 @@
 
       <form-autocomplete
         v-model="selectedPeople"
-        :label="'Participants'"
         :placeholder="'Type to search'"
         :options="filteredPeople"
         :option-key="'name'"
         :loading="isSearchLoading"
-        :tags="true"
-        :clear-on-select="false"
         :close-on-select="false"
+        :clear-on-select="false"
+        tags
         @search-change="searchPeople"
       >
         <template
