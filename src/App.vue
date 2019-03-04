@@ -19,6 +19,12 @@
         @selected="openLink($event)"
         @search-change="searchProduct"
       >
+        <template
+          #label
+        >
+          Product name
+        </template>
+
         <template #item="{ item }">
           <div class="search-item__left">
             <img
@@ -84,6 +90,12 @@
         tags
         @search-change="searchPeople"
       >
+        <template
+          #label
+        >
+          Participants
+        </template>
+
         <template
           #tag="{ item }"
         >

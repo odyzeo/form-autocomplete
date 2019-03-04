@@ -79,7 +79,9 @@
           :for="uid"
           class="form-item__label"
         >
-          {{ label }}
+          <slot name="label">
+            Label
+          </slot>
         </label>
       </div>
 
@@ -152,10 +154,6 @@ export default {
     maxHeight: {
       type: Number,
       default: 190,
-    },
-    label: {
-      type: String,
-      default: '',
     },
     placeholder: {
       type: String,
