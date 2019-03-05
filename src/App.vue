@@ -15,7 +15,6 @@
         :loading="isSearchLoading"
         :limit-max-height="false"
         select-first
-        hide-selected
         @selected="openLink($event)"
         @search-change="searchProduct"
       >
@@ -81,12 +80,14 @@
 
       <form-autocomplete
         v-model="selectedPeople"
+        :data="people"
         :placeholder="'Type to search'"
         :options="filteredPeople"
         :option-key="'name'"
         :loading="isSearchLoading"
         :close-on-select="false"
         :clear-on-select="false"
+        confirm-tag-removal
         tags
         @search-change="searchPeople"
       >

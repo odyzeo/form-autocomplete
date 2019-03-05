@@ -1,10 +1,3 @@
-<!--TODO: Current issues-->
-<!-- - <NEEDED DISCUSSION> In case where there is tag already selected, the empty input does not show all the results-->
-<!-- - <NEEDED DISCUSSION> add data prop to force results container to show all data items-->
-<!-- - <FIXED> Also when results are shown, and input is erased all results will be shown during transition leave-->
-<!-- - <FIXED> Possible Label issue in tag mode -->
-<!-- - Maybe add highlighter when removing tags; so it-->
-
 <template>
   <div
     class="form-item"
@@ -147,6 +140,10 @@ function not(fun) {
 
 export default {
   props: {
+    data: {
+      type: Array,
+      default: () => [],
+    },
     optionHeight: {
       type: Number,
       default: 38,
@@ -172,10 +169,6 @@ export default {
       default: true,
     },
     closeOnSelect: {
-      type: Boolean,
-      default: true,
-    },
-    hideSelected: {
       type: Boolean,
       default: true,
     },
@@ -217,6 +210,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    duplicates: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     let query = '';
@@ -246,9 +243,22 @@ export default {
       return this.filteredItems.length > 0;
     },
     filteredItems() {
-      let options = this.options.concat();
+      let options;
 
-      options = this.hideSelected ? options.filter(not(this.isSelected)) : options;
+      if (this.canShowAllData) {
+        let tempFilteredItems = this.data;
+
+        this.selected.forEach(() => {
+          tempFilteredItems = tempFilteredItems.filter(not(this.isSelected));
+        });
+
+        options = !this.duplicates ? tempFilteredItems : this.data;
+
+        return options;
+      }
+
+      options = this.options.concat();
+      options = !this.duplicates ? options.filter(not(this.isSelected)) : options;
 
       return options;
     },
@@ -258,8 +268,14 @@ export default {
     pointerPosition() {
       return this.current * this.optionHeight;
     },
+    hasData() {
+      return this.data.length > 0;
+    },
+    canShowAllData() {
+      return this.hasData && this.isEmpty;
+    },
     showDropdown() {
-      return this.focus && this.hasItems && !this.isEmpty;
+      return this.focus && ((this.hasItems && !this.isEmpty) || this.canShowAllData);
     },
     showNoResults() {
       return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
@@ -297,6 +313,8 @@ export default {
   methods: {
     onSelect(item) {
       if (this.tags) {
+        this.resetActiveTags();
+
         this.$emit('input', [...this.selected, item]);
       } else {
         this.$emit('input', [item]);
@@ -306,6 +324,8 @@ export default {
         this.clear();
       } else {
         this.query = item[this.optionKey];
+
+        this.updateSearch();
       }
 
       if (this.closeOnSelect) {
@@ -445,6 +465,7 @@ export default {
     resetActiveTags() {
       if (this.confirmTagRemoval) {
         this.localValue.forEach((item) => {
+          // eslint-disable-next-line
           delete item.active;
         });
       }

@@ -1,6 +1,7 @@
-# zeo-form-autocomplete
+# @odyzeo/form-autocomplete
 
-Simple autocomplete Vue.js component.
+Simple autocomplete Vue.js component with ability to select multiple options, 
+keyboard usage, and multiple options to choose from. 
 
 ## Installation
 
@@ -40,62 +41,81 @@ import 'form-autocomplete/dist/form-autocomplete.css';
   <h1>Autocomplete - single</h1>
   <form-autocomplete
     v-model="selectedItems"
-    :label="'Participants'"
     :placeholder="'Type to search'"
     :options="filteredItems"
     :option-id="'name'"
-    :loading="isSearchLoading"
-    :hide-selected="true"
-    :select-first="true"
+    :loading="isSearchLoading"  
+    select-first
+    @selected="openLink($event)"
     @search-change="search"
   >
     <template
-      slot="tag"
-      slot-scope="props"
+      #label
     >
-      {{ props.item.name }}
+      Participants
     </template>
-    <template
-      slot="item"
-      slot-scope="props"
-    >
-      {{ props.item.name }}
+          
+    <template #item="{ item }">
+      {{ item.name }}
     </template>
-    <template slot="no-results">
+    
+    <template #no-results>
       Participants not found
     </template>
-    <template slot="loading">
+    
+    <template #loading>
       ...loading...
     </template>
+    
+    <template #after-list>
+      <a
+        v-if="linkToAllResults"
+        :href="linkToAllResults.link"
+        class="form-item__dropdown-item"
+      >
+        <div class="search-item__more">
+          <span class="search-item__more-link">
+            {{ linkToAllResults.text }}
+          </span>
+        </div>
+      </a>
+    </template>  
   </form-autocomplete>
 
   <h1>Autocomplete - tags</h1>
+  
   <form-autocomplete
     v-model="selectedTagItems"
-    :label="'Participants'"
     :placeholder="'Type to search'"
     :options="filteredItems"
     :option-id="'name'"
     :loading="isSearchLoading"
-    :hide-selected="true"
-    :tags="true"
-    :select-first="true"
+    :close-on-select="false"
+    :clear-on-select="false"
+    confirm-tag-removal
+    tags
+    select-first
     @search-change="search"
   >
     <template
-      slot="tag"
-      slot-scope="props">
-      {{ props.item.name }}
+      #label
+    >
+      Participants
     </template>
-    <template
-      slot="item"
-      slot-scope="props">
-      {{ props.item.name }}
+          
+    <template #tag="{ item }">
+      {{ item.name }}
     </template>
-    <template slot="no-results">
+        
+    <template #item="{ item }">
+      {{ item.name }}
+    </template>
+    
+    <template #no-results>
       Participants not found
     </template>
-    <template slot="loading">
+    
+    <template #loading>
       ...loading...
     </template>
   </form-autocomplete>
@@ -129,11 +149,10 @@ export default {
     };
   },
   methods: {
-    search(query) {
-      this.filteredItems = [];
+    search(query) {    
       this.isSearchLoading = true;
 
-      if (query.length < this.minSearchLength) {
+      if (query.length < this.minSearchLength || query === '') {
         return;
       }
 
@@ -154,25 +173,29 @@ export default {
 
 | Property name | Type | Default value | Description |
 | ------------- | ---- | ------------- | ----------- |
+| `data` | array | `[]` | Array of all options, if provided - will show results on empty input as all provided data. Will show duplicates if `duplicates` prop is set to true |
+| `options` | array | `[]` | Array of options to display, these should be influenced by outer search methods for example. |
 | `optionHeight` | number | `38` | Single option height |
+| `optionKey` | string | `name` | Name of the object key to get value displayed in dropdown |
+| `value or v-model` | array | `[]` | Array of initial selected option(s) |
+| `selectFirst` | boolean | `false` | Whether to auto select first value from dropdown options |
+| `tags` | boolean | `false` | Whether to select multiple options - tags |
+| `confirmTagRemoval` | boolean | `false` | Whether there should be a visualised confirmation when removing tags with keyboard |
+| `duplicates` | boolean | `false` | Hide selected values from dropdown options, ensure no duplicates can be chosen |
 | `maxHeight` | number | `190` | Dropdown options max height |
-| `label` | string | `''` | Label name for input |
+| `limitMaxHeight` | boolean | `true` | If results dropdown should have max-height, set to false if you limit amout of your results in your backend/api |
 | `placeholder` | string | | Input `placeholer` attribute |
 | `loading` | boolean | `false` | Show loading indicator |
 | `disabled` | boolean | `false` | Set disabled input |
 | `clearOnSelect` | boolean | `true` | Clear input on select |
 | `closeOnSelect` | boolean | `true` | Hide dropdown on select |
-| `hideSelected` | boolean | `true` | Hide selected values from dropdown options |
-| `value` | array | `[]` | Array of initial selected option(s) |
-| `options` | array | `[]` | Array of options to display |
-| `optionKey` | string | `name` | Name of the object key to get value displayed in dropdown |
 | `formErrors` | array | `[]` | Array of errors to display |
-| `selectFirst` | boolean | `false` | Whether to auto select first value from dropdown options |
-| `tags` | boolean | `false` | Whether to select multiple options - tags |
 | `transitionName` | string | `fade` | Name of css transition class |
-| `limitMaxHeight` | boolean | `true` | If results dropdown should have max-height, set to false if you limit amout of your results in your backend/api |
 
 ## Slots
+### label
+Label value for input element.
+
 ### prepend
 Div block before input element, use it to display an icon
 
