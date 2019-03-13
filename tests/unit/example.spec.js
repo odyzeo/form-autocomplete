@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import FormAutocomplete from '@/components/FormAutocomplete.vue';
+import FormAutocomplete from '@/components/FormAutocomplete';
 
 describe('FormAutocomplete.vue', () => {
   it('renders props.msg when passed', () => {

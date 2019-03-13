@@ -5,41 +5,45 @@
  * <form-autocomplete> tags styling
  */
 .form-item__tags {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 27px 10px 7px;
-  background-color: @form-input-background--light;
-  border-radius: @input-radius;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 27px 10px 7px;
+    background-color: @form-input-background--light;
+    border-radius: @input-radius;
 }
 
 .form-item__tag {
-  display: flex;
-  margin: 3px 3px 0 0;
+    display: flex;
+    margin: 3px 3px 0 0;
 
-  border-radius: 2px;
-  background-color: @color--tag;
-  color: #fff;
-  line-height: 1.2;
+    border-radius: 2px;
+    background-color: @color--tag;
+    color: #fff;
+    line-height: 1.2;
+
+    &.is-active {
+        outline: 1px auto @color--danger;
+    }
 }
 
 .form-item__tag-text {
-  padding: 2px 5px;
-  font-size: @font-size--xsmall;
+    padding: 2px 5px;
+    font-size: @font-size--xsmall;
 }
 
 .form-item__tag-remove {
-  display: flex;
-  align-items: center;
-  padding: 0 3px 0 3px;
-  border-radius: 2px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    padding: 0 3px 0 3px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
 
-  &:hover {
-    cursor: pointer;
-    background-color: darken(@color--tag, 20%);
-  }
+    &:hover {
+        cursor: pointer;
+        background-color: darken(@color--tag, 20%);
+    }
 }
 
 /**
@@ -47,86 +51,97 @@
  */
 .form-item--tags:not(.form-item--tags-filled) {
 
-  .form-item__input {
-    .visually-hidden;
-  }
+    .form-item__input {
+        .visually-hidden;
+    }
 }
 
 .form-item--tags-filled {
-  .form-item__tags {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
+    .form-item__tags {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
 
-  .form-item__input {
-    padding-top: 0;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
-    display: block;
-  }
+    .form-item__input {
+        padding-top: 0;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        display: block;
+    }
 }
 
 /**
  * <form-autocomplete> dropdown
  */
 .form-item__dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  z-index: 1000;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 1000;
 
-  margin-top: -@input-radius;
-  padding: 0;
-  border-top: 1px solid #ddd;
+    margin-top: -@input-radius;
+    padding: 0;
+    border-top: 1px solid #ddd;
 
-  // MAx 5 items
-  // max-height: 209px; // Set in props
-  overflow: auto;
-  border-bottom-left-radius: @input-radius;
-  border-bottom-right-radius: @input-radius;
+    // MAx 5 items
+    // max-height: 209px; // Set in props
+    overflow: auto;
+    border-bottom-left-radius: @input-radius;
+    border-bottom-right-radius: @input-radius;
 }
 
 .form-item__dropdown-item {
-  background: #ddd;
-  display: block;
-  padding: 10px;
-  color: #000;
+    background: #ddd;
+    display: flex;
+    padding: 10px;
+    color: #000;
 
-  transition: background-color 0.2s ease;
-  list-style: none;
+    transition: background-color 0.2s ease;
+    list-style: none;
 
-  &:last-child {
-    border-bottom-left-radius: @input-radius;
-    border-bottom-right-radius: @input-radius;
-  }
+    &:last-child {
+        border-bottom-left-radius: @input-radius;
+        border-bottom-right-radius: @input-radius;
+    }
 
-  &.is-active {
-    background-color: #ccc;
-    font-weight: 700;
-  }
+    &.is-active {
+        background-color: #ccc;
+        font-weight: 700;
+    }
 
-  &:hover {
-    background-color: #ccc;
-    cursor: pointer;
-  }
+    &:hover {
+        background-color: #ccc;
+        cursor: pointer;
+    }
 }
 
 .form-item__dropdown--no-results {
-  .form-item__dropdown-item {
-    &:hover {
-      background-color: @form-input-background--light;
-      cursor: initial;
+    .form-item__dropdown-item {
+        &:hover {
+            background-color: @form-input-background--light;
+            cursor: initial;
+        }
     }
-  }
 }
 
 /**
  * <form-autocomplete> loading icon
  */
 .form-item__loading {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  z-index: 1;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    z-index: 1;
+}
+
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity .5s ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+    opacity: 0
 }
