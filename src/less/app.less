@@ -3,97 +3,97 @@
 @import "mixins";
 @import "./form-item";
 
- * {
-   box-sizing: border-box;
- }
+* {
+    box-sizing: border-box;
+}
 
 html,
 body {
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
 .app {
-  width: 100%;
+    width: 100%;
 }
 
 h1 {
-  text-align: center;
+    text-align: center;
 }
 
 .container {
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 @mobile-container-padding;
-
-  @media (min-width: @break-t-min) {
-    padding: 0 @desktop-container-padding;
-  }
-
-  @media (min-width: @break-d-min) {
-    padding: 0 @desktop-container-padding;
-  }
-
-  @media (min-width: @container-width) {
     width: 100%;
-    max-width: @dashboard--container-width;
-    padding: 0 @tablet-container-padding;
-  }
+    margin: 0 auto;
+    padding: 0 @mobile-container-padding;
+
+    @media (min-width: @break-t-min) {
+        padding: 0 @desktop-container-padding;
+    }
+
+    @media (min-width: @break-d-min) {
+        padding: 0 @desktop-container-padding;
+    }
+
+    @media (min-width: @container-width) {
+        width: 100%;
+        max-width: @dashboard--container-width;
+        padding: 0 @tablet-container-padding;
+    }
 }
 
 .search-item__more {
-  flex: 1 0 auto;
+    flex: 1 0 auto;
 
-  display: flex;
-  justify-content: center;
-  text-align: center;
+    display: flex;
+    justify-content: center;
+    text-align: center;
 
-  .font(14px, 600);
+    .font(14px, 600);
 }
 
 .search-item__more-link {
-  color: @color--primary;
-  text-decoration: underline;
+    color: @color--primary;
+    text-decoration: underline;
 }
 
 .search-item__more-number {
-  color: @color--primary;
+    color: @color--primary;
 }
 
 .search-item__left {
-  width: 75px;
-  margin-right: 20px;
+    width: 75px;
+    margin-right: 20px;
 }
 
 .search-item__title {
-  margin-bottom: 5px;
-  color: @color--primary;
-  .font(12px, 600);
-  line-height: 1.5;
-  text-decoration: underline;
+    margin-bottom: 5px;
+    color: @color--primary;
+    .font(12px, 600);
+    line-height: 1.5;
+    text-decoration: underline;
 }
 
 .search-item__price,
 .search-item__code {
-  font-size: 11px;
-  line-height: 1.6;
+    font-size: 11px;
+    line-height: 1.6;
 }
 
 .search-item__price {
-  color: @color--default;
-  font-weight: 700;
+    color: @color--default;
+    font-weight: 700;
 }
 
 .search-item__code {
-  color: @color--default;
-  font-weight: 600;
+    color: @color--default;
+    font-weight: 600;
 }
