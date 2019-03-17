@@ -316,18 +316,22 @@ export default {
     },
     methods: {
         onSelect(item) {
-            if (this.tags) {
-                this.resetActiveTags();
+            if (item) {
+                if (this.tags) {
+                    this.resetActiveTags();
 
-                this.$emit('input', [...this.selected, item]);
-            } else {
-                this.$emit('input', [item]);
+                    this.$emit('input', [...this.selected, item]);
+                } else {
+                    this.$emit('input', [item]);
+                }
             }
 
             if (this.tags && this.clearOnSelect) {
                 this.clear();
             } else {
-                this.query = item[this.optionKey];
+                if (item !== null) {
+                    this.query = item[this.optionKey];
+                }
 
                 this.updateSearch();
             }
@@ -337,13 +341,16 @@ export default {
             }
         },
         selectCurrent() {
-            const currentItem = this.filteredItems[this.current];
-
             if (this.current !== -1) {
+                const currentItem = this.filteredItems[this.current];
+
                 this.$emit('selected', currentItem);
 
                 this.onSelect(currentItem);
                 this.reset();
+            } else {
+                this.$emit('selected', this.query);
+                this.onSelect(null);
             }
         },
         onFocus() {
@@ -444,6 +451,8 @@ export default {
             this.query = '';
         },
         close() {
+            this.reset();
+
             this.$refs.input.blur();
         },
         removeTag(index, keypress) {
@@ -483,5 +492,5 @@ export default {
 </script>
 
 <style lang="less">
-@import '../less/form-autocomplete.less';
+    @import '../less/form-autocomplete.less';
 </style>

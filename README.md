@@ -40,14 +40,14 @@ import 'form-autocomplete/dist/form-autocomplete.css';
 <template>
   <h1>Autocomplete - single</h1>
   <form-autocomplete
-    v-model="selectedItems"
-    :placeholder="'Type to search'"
+    :limit-max-height="false"
+    :loading="isSearchLoading"
+    :option-key="'name'"
     :options="filteredItems"
-    :option-id="'name'"
-    :loading="isSearchLoading"  
-    select-first
-    @selected="openLink($event)"
+    :placeholder="'Type to search'"
+    :clear-on-select="false"
     @search-change="search"
+    @selected="openLink($event)"
   >
     <template
       #label
@@ -146,28 +146,52 @@ export default {
       ],
       filteredItems: [],
       isSearchLoading: false,
+      minSearchLength: 3,
     };
   },
   methods: {
+    openLink(item) {
+        if (typeof item === 'string') {
+          if (query.length < this.minSearchLength || query === '') {
+              this.isSearchLoading = false;
+        
+              return;
+          }
+        
+          window.location = `/#${item}`;
+          // Generate search page with returned query
+          
+          return;
+        }
+        
+        window.location = item.url;
+    },
     search(query) {    
-      this.isSearchLoading = true;
-
-      if (query.length < this.minSearchLength || query === '') {
-        return;
-      }
-
-      this.startSearching(query);
+        this.isSearchLoading = true;
+        
+        if (query.length < this.minSearchLength || query === '') {
+            return;
+        }
+        
+        this.startSearching(query);
     },
     startSearching(query) {
-      this.filteredItems = this.items.filter(item =>
+        this.filteredItems = this.items.filter(item =>
         item.name.toLowerCase()
           .includes(query.toLowerCase()));
-      this.isSearchLoading = false;
+        this.isSearchLoading = false;
     },
   },
 };
 </script>
 ```
+## Events
+### Search-change
+Returns input given
+
+### Selected
+Will return either input given on enter pressed or returns 
+Array item from search results
 
 ## Props
 
