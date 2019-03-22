@@ -421,7 +421,7 @@ export default {
             }
         },
         onDelete() {
-            if (this.query.length === 0) {
+            if (this.isEmpty && this.selected.length !== 0) {
                 this.removeTag(this.selected.length - 1, true);
             }
         },
