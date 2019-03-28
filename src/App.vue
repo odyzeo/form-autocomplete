@@ -14,7 +14,7 @@
                 :option-key="'name'"
                 :options="filteredProducts"
                 :placeholder="'Type to search'"
-                select-first
+                :clear-on-select="false"
                 @search-change="searchProduct"
                 @selected="openLink($event)"
             >
@@ -161,16 +161,29 @@ export default {
                 link: 'http://www.google.com',
                 text: 'Show all results (42)',
             },
+            minSearchLength: 3,
         };
     },
     methods: {
         openLink(item) {
+            if (typeof item === 'string') {
+                if (this.isQueryValid(item)) {
+                    this.isSearchLoading = false;
+
+                    return;
+                }
+
+                window.location = `/#${item}`;
+                // Generate search page with returned query
+                return;
+            }
+
             window.location = item.url;
         },
         searchProduct(query) {
             this.isSearchLoading = true;
 
-            if (query.length < this.minSearchLength || query === '') {
+            if (this.isQueryValid(query)) {
                 this.isSearchLoading = false;
 
                 return;
@@ -181,7 +194,7 @@ export default {
         searchPeople(query) {
             this.isSearchLoading = true;
 
-            if (query.length < this.minSearchLength || query === '') {
+            if (this.isQueryValid(query)) {
                 this.isSearchLoading = false;
 
                 return;
@@ -199,10 +212,13 @@ export default {
                 .includes(query.toLowerCase()));
             this.isSearchLoading = false;
         },
+        isQueryValid(query) {
+            return query.length < this.minSearchLength || query === '';
+        },
     },
 };
 </script>
 
 <style lang="less">
-@import '../src/less/app.less';
+    @import '../src/less/app.less';
 </style>
