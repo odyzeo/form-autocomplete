@@ -190,8 +190,7 @@ export default {
 Returns input given
 
 ### Selected
-Will return either input given on enter pressed or returns 
-Array item from search results
+Returns input given or array of items selected 
 
 ## Props
 

@@ -399,10 +399,10 @@ export default {
                 this.current = 0;
             }
 
+            const { scrollTop } = this.$refs.list;
             if (
-                this.$refs.list.scrollTop < this.pointerPosition
-                && (this.$refs.list.scrollTop + this.maxHeight - this.optionHeight)
-                    > this.pointerPosition
+                scrollTop < this.pointerPosition
+                && (scrollTop + this.maxHeight - this.optionHeight) > this.pointerPosition
             ) {
                 return;
             }
@@ -492,5 +492,5 @@ export default {
 </script>
 
 <style lang="less">
-    @import '../less/form-autocomplete.less';
+@import '../less/form-autocomplete.less';
 </style>
