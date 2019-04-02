@@ -61,7 +61,7 @@
                     type="text"
                     @blur.prevent="onBlur"
                     @focus="onFocus"
-                    @input="updateSearch($event)"
+                    @input="!debounce ? updateSearch($event) : debouncedSearch($event)"
                     @keydown.delete="onDelete"
                     @keydown.down.prevent="onDown"
                     @keydown.enter.prevent="selectCurrent"
@@ -111,7 +111,7 @@
                 </div>
             </transition>
             <ul
-                v-if="showNoResults && !isTyping"
+                v-if="showNoResults"
                 class="form-item__dropdown form-item__dropdown--no-results"
             >
                 <li class="form-item__dropdown-item">
@@ -229,6 +229,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        debounce: {
+            type: Number,
+            default: 0,
+        },
     },
     data() {
         let query = '';
@@ -247,9 +251,11 @@ export default {
             // eslint-disable-next-line no-underscore-dangle
             specialId: this._uid,
             isTyping: false,
-            setTypingOnNoInput: debounce(() => {
+            debounceSearch: debounce((ev) => {
+                this.updateSearch(ev);
+
                 this.isTyping = false;
-            }, 300),
+            }, this.debounce),
         };
     },
     computed: {
@@ -299,7 +305,7 @@ export default {
             return this.focus && ((this.hasItems && !this.isEmpty) || this.canShowAllData);
         },
         showNoResults() {
-            return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
+            return this.focus && !this.loading && !this.hasItems && !this.isEmpty && !this.isTyping;
         },
         showTags() {
             return this.tags && this.selected.length > 0;
@@ -452,8 +458,6 @@ export default {
         updateSearch() {
             this.showFormErrors = false;
 
-            this.toggleTyping();
-
             if (this.tags) {
                 this.resetActiveTags();
             }
@@ -506,9 +510,10 @@ export default {
                 });
             }
         },
-        toggleTyping() {
+        debouncedSearch() {
             this.isTyping = true;
-            this.setTypingOnNoInput();
+
+            this.debounceSearch();
         },
     },
 };

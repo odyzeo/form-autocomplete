@@ -15,6 +15,7 @@
                 :options="filteredProducts"
                 :placeholder="'Type to search'"
                 :clear-on-select="false"
+                :debounce="200"
                 @search-change="searchProduct"
                 @selected="openLink($event)"
             >
