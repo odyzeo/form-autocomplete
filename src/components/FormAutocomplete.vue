@@ -111,7 +111,7 @@
                 </div>
             </transition>
             <ul
-                v-if="showNoResults"
+                v-if="showNoResults && !isTyping"
                 class="form-item__dropdown form-item__dropdown--no-results"
             >
                 <li class="form-item__dropdown-item">
@@ -139,6 +139,19 @@
 function not(fun) {
     return (...params) => !fun(...params);
 }
+
+const debounce = (callback, time) => {
+    let interval;
+
+    return (...args) => {
+        clearTimeout(interval);
+
+        interval = setTimeout(() => {
+            interval = null;
+            callback(...args);
+        }, time);
+    };
+};
 
 export default {
     props: {
@@ -233,6 +246,10 @@ export default {
             localValue: this.value,
             // eslint-disable-next-line no-underscore-dangle
             specialId: this._uid,
+            isTyping: false,
+            setTypingOnNoInput: debounce(() => {
+                this.isTyping = false;
+            }, 300),
         };
     },
     computed: {
@@ -435,6 +452,8 @@ export default {
         updateSearch() {
             this.showFormErrors = false;
 
+            this.toggleTyping();
+
             if (this.tags) {
                 this.resetActiveTags();
             }
@@ -486,6 +505,10 @@ export default {
                     delete item.active;
                 });
             }
+        },
+        toggleTyping() {
+            this.isTyping = true;
+            this.setTypingOnNoInput();
         },
     },
 };
