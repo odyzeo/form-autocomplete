@@ -61,7 +61,7 @@
                     type="text"
                     @blur.prevent="onBlur"
                     @focus="onFocus"
-                    @input="!debounce ? updateSearch($event) : debouncedSearch($event)"
+                    @input="onInput"
                     @keydown.delete="onDelete"
                     @keydown.down.prevent="onDown"
                     @keydown.enter.prevent="selectCurrent"
@@ -157,7 +157,7 @@ export default {
     props: {
         data: {
             type: Array,
-            default: () => [],
+            default: () => ([]),
         },
         optionHeight: {
             type: Number,
@@ -189,9 +189,7 @@ export default {
         },
         value: {
             type: null,
-            default() {
-                return [];
-            },
+            default: () => ([]),
         },
         options: {
             type: Array,
@@ -203,7 +201,7 @@ export default {
         },
         formErrors: {
             type: [Array, Object],
-            default: () => [],
+            default: () => ([]),
         },
         selectFirst: {
             type: Boolean,
@@ -251,8 +249,8 @@ export default {
             // eslint-disable-next-line no-underscore-dangle
             specialId: this._uid,
             isTyping: false,
-            debounceSearch: debounce((ev) => {
-                this.updateSearch(ev);
+            debounceSearch: debounce(() => {
+                this.updateSearch();
 
                 this.isTyping = false;
             }, this.debounce),
@@ -463,6 +461,13 @@ export default {
             }
 
             this.$emit('search-change', this.query);
+        },
+        onInput() {
+            if (this.debounce > 0) {
+                this.debouncedSearch();
+            } else {
+                this.updateSearch();
+            }
         },
         activeClass(index) {
             return this.current === index;
