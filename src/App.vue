@@ -15,6 +15,7 @@
                 :options="filteredProducts"
                 :placeholder="'Type to search'"
                 :clear-on-select="false"
+                :debounce="200"
                 @search-change="searchProduct"
                 @selected="openLink($event)"
             >
@@ -167,7 +168,7 @@ export default {
     methods: {
         openLink(item) {
             if (typeof item === 'string') {
-                if (this.isQueryValid(item)) {
+                if (!this.isQueryValid(item)) {
                     this.isSearchLoading = false;
 
                     return;
@@ -181,22 +182,14 @@ export default {
             window.location = item.url;
         },
         searchProduct(query) {
-            this.isSearchLoading = true;
-
-            if (this.isQueryValid(query)) {
-                this.isSearchLoading = false;
-
+            if (!this.isQueryValid(query)) {
                 return;
             }
 
             this.startSearchingProducts(query);
         },
         searchPeople(query) {
-            this.isSearchLoading = true;
-
-            if (this.isQueryValid(query)) {
-                this.isSearchLoading = false;
-
+            if (!this.isQueryValid(query)) {
                 return;
             }
 
@@ -205,20 +198,23 @@ export default {
         startSearchingPeople(query) {
             this.filteredPeople = this.people.filter(item => item.name.toLowerCase()
                 .includes(query.toLowerCase()));
-            this.isSearchLoading = false;
         },
         startSearchingProducts(query) {
-            this.filteredProducts = this.products.filter(item => item.name.toLowerCase()
-                .includes(query.toLowerCase()));
-            this.isSearchLoading = false;
+            this.isSearchLoading = true;
+
+            setTimeout(() => {
+                this.filteredProducts = this.products.filter(item => item.name.toLowerCase()
+                    .includes(query.toLowerCase()));
+                this.isSearchLoading = false;
+            }, 500);
         },
         isQueryValid(query) {
-            return query.length < this.minSearchLength || query === '';
+            return query.length >= this.minSearchLength && query !== '';
         },
     },
 };
 </script>
 
 <style lang="less">
-    @import '../src/less/app.less';
+@import '../src/less/app.less';
 </style>

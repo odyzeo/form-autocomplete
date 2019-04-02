@@ -61,7 +61,7 @@
                     type="text"
                     @blur.prevent="onBlur"
                     @focus="onFocus"
-                    @input="updateSearch($event)"
+                    @input="onInput"
                     @keydown.delete="onDelete"
                     @keydown.down.prevent="onDown"
                     @keydown.enter.prevent="selectCurrent"
@@ -140,11 +140,24 @@ function not(fun) {
     return (...params) => !fun(...params);
 }
 
+const debounce = (callback, time) => {
+    let interval;
+
+    return (...args) => {
+        clearTimeout(interval);
+
+        interval = setTimeout(() => {
+            interval = null;
+            callback(...args);
+        }, time);
+    };
+};
+
 export default {
     props: {
         data: {
             type: Array,
-            default: () => [],
+            default: () => ([]),
         },
         optionHeight: {
             type: Number,
@@ -176,9 +189,7 @@ export default {
         },
         value: {
             type: null,
-            default() {
-                return [];
-            },
+            default: () => ([]),
         },
         options: {
             type: Array,
@@ -190,7 +201,7 @@ export default {
         },
         formErrors: {
             type: [Array, Object],
-            default: () => [],
+            default: () => ([]),
         },
         selectFirst: {
             type: Boolean,
@@ -216,6 +227,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        debounce: {
+            type: Number,
+            default: 0,
+        },
     },
     data() {
         let query = '';
@@ -233,6 +248,12 @@ export default {
             localValue: this.value,
             // eslint-disable-next-line no-underscore-dangle
             specialId: this._uid,
+            isTyping: false,
+            debounceSearch: debounce(() => {
+                this.updateSearch();
+
+                this.isTyping = false;
+            }, this.debounce),
         };
     },
     computed: {
@@ -282,7 +303,7 @@ export default {
             return this.focus && ((this.hasItems && !this.isEmpty) || this.canShowAllData);
         },
         showNoResults() {
-            return this.focus && !this.loading && !this.hasItems && !this.isEmpty;
+            return this.focus && !this.loading && !this.hasItems && !this.isEmpty && !this.isTyping;
         },
         showTags() {
             return this.tags && this.selected.length > 0;
@@ -441,6 +462,13 @@ export default {
 
             this.$emit('search-change', this.query);
         },
+        onInput() {
+            if (this.debounce > 0) {
+                this.debouncedSearch();
+            } else {
+                this.updateSearch();
+            }
+        },
         activeClass(index) {
             return this.current === index;
         },
@@ -486,6 +514,11 @@ export default {
                     delete item.active;
                 });
             }
+        },
+        debouncedSearch() {
+            this.isTyping = true;
+
+            this.debounceSearch();
         },
     },
 };

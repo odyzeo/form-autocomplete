@@ -214,6 +214,7 @@ Returns input given or array of items selected
 | `closeOnSelect` | boolean | `true` | Hide dropdown on select |
 | `formErrors` | array | `[]` | Array of errors to display |
 | `transitionName` | string | `fade` | Name of css transition class |
+| `debounce` | number | `0` | Enable debounce for search update by setting a value (other than 0) |
 
 ## Slots
 ### label
