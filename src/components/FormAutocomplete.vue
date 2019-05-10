@@ -188,7 +188,7 @@ export default {
             default: true,
         },
         value: {
-            type: null,
+            type: [String, Array],
             default: () => ([]),
         },
         options: {
@@ -235,8 +235,8 @@ export default {
     data() {
         let query = '';
 
-        if (!this.tags && Array.isArray(this.value) && this.value.length > 0) {
-            query = this.value[0][this.optionKey];
+        if (!this.tags && typeof this.value === 'string' && this.value !== '') {
+            query = this.value;
         }
 
         return {
@@ -376,6 +376,10 @@ export default {
         },
         onFocus() {
             this.focus = true;
+
+            if (!this.closeOnSelect) {
+                document.addEventListener('click', this.offClick);
+            }
         },
         onBlur() {
             this.reset();
@@ -398,7 +402,14 @@ export default {
                 });
             }
 
-            this.focus = false;
+            if (this.closeOnSelect) {
+                this.focus = false;
+            }
+        },
+        offClick(ev) {
+            if (!this.$el.contains(ev.target)) {
+                this.closeWithOffClick();
+            }
         },
         onEsc() {
             this.reset();
@@ -481,7 +492,16 @@ export default {
         close() {
             this.reset();
 
+            if (this.closeOnSelect) {
+                this.$refs.input.blur();
+            } else {
+                this.closeWithOffClick();
+            }
+        },
+        closeWithOffClick() {
+            this.focus = false;
             this.$refs.input.blur();
+            document.removeEventListener('click', this.offClick);
         },
         removeTag(index, keypress) {
             if (this.confirmTagRemoval) {
