@@ -6,3 +6,5 @@ describe('My First Test', () => {
     cy.contains('h1', 'Welcome to Your Vue.js App');
   });
 });
+
+// TODO TEST if :value, v-model is string - prefill query

@@ -187,9 +187,12 @@ export default {
             type: Boolean,
             default: true,
         },
+        /**
+         * Also v-model
+         */
         value: {
-            type: null,
-            default: () => ([]),
+            type: [String, Array],
+            default: '',
         },
         options: {
             type: Array,
@@ -235,8 +238,8 @@ export default {
     data() {
         let query = '';
 
-        if (!this.tags && Array.isArray(this.value) && this.value.length > 0) {
-            query = this.value[0][this.optionKey];
+        if (typeof this.value === 'string') {
+            query = this.value;
         }
 
         return {
@@ -376,6 +379,10 @@ export default {
         },
         onFocus() {
             this.focus = true;
+
+            if (!this.closeOnSelect) {
+                document.addEventListener('click', this.offClick);
+            }
         },
         onBlur() {
             this.reset();
@@ -398,7 +405,14 @@ export default {
                 });
             }
 
-            this.focus = false;
+            if (this.closeOnSelect) {
+                this.focus = false;
+            }
+        },
+        offClick(ev) {
+            if (!this.$el.contains(ev.target)) {
+                this.closeWithOffClick();
+            }
         },
         onEsc() {
             this.reset();
@@ -481,7 +495,16 @@ export default {
         close() {
             this.reset();
 
+            if (this.closeOnSelect) {
+                this.$refs.input.blur();
+            } else {
+                this.closeWithOffClick();
+            }
+        },
+        closeWithOffClick() {
+            this.focus = false;
             this.$refs.input.blur();
+            document.removeEventListener('click', this.offClick);
         },
         removeTag(index, keypress) {
             if (this.confirmTagRemoval) {

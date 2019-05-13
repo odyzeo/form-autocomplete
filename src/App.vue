@@ -81,7 +81,7 @@
 
             <form-autocomplete
                 v-model="selectedPeople"
-                :clear-on-select="false"
+                :clear-on-select="true"
                 :close-on-select="false"
                 :data="people"
                 :loading="isSearchLoading"
