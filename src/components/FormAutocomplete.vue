@@ -187,9 +187,12 @@ export default {
             type: Boolean,
             default: true,
         },
+        /**
+         * Also v-model
+         */
         value: {
             type: [String, Array],
-            default: () => ([]),
+            default: '',
         },
         options: {
             type: Array,
@@ -235,7 +238,7 @@ export default {
     data() {
         let query = '';
 
-        if (!this.tags && typeof this.value === 'string' && this.value !== '') {
+        if (typeof this.value === 'string') {
             query = this.value;
         }
 
