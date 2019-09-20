@@ -9,6 +9,14 @@
             <p>Using autocomplete as search with rerouting user to url of found item</p>
 
             <form-autocomplete
+                :options="products"
+                :placeholder="'omg'"
+                option-key="name"
+                show-on-focus
+            >
+            </form-autocomplete>
+
+            <form-autocomplete
                 :limit-max-height="false"
                 :loading="isSearchLoading"
                 :option-key="'name'"
@@ -17,7 +25,6 @@
                 :clear-on-select="false"
                 :debounce="200"
                 @search-change="searchProduct"
-                @selected="openLink($event)"
             >
                 <template
                     #label

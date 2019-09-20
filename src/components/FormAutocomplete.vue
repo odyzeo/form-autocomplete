@@ -234,6 +234,10 @@ export default {
             type: Number,
             default: 0,
         },
+        showOnFocus: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         let query = '';
@@ -303,6 +307,9 @@ export default {
             return this.hasData && this.isEmpty;
         },
         showDropdown() {
+            if (this.showOnFocus) {
+                return this.focus;
+            }
             return this.focus && ((this.hasItems && !this.isEmpty) || this.canShowAllData);
         },
         showNoResults() {
@@ -380,6 +387,10 @@ export default {
         onFocus() {
             this.focus = true;
 
+            if (this.showOnFocus) {
+                this.onInput();
+            }
+
             if (!this.closeOnSelect) {
                 document.addEventListener('click', this.offClick);
             }
@@ -387,7 +398,7 @@ export default {
         onBlur() {
             this.reset();
 
-            if (this.clearOnSelect) {
+            if (this.tags && this.clearOnSelect) {
                 this.clear();
             }
 

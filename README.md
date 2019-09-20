@@ -88,7 +88,7 @@ import 'form-autocomplete/dist/form-autocomplete.css';
     v-model="selectedTagItems"
     :placeholder="'Type to search'"
     :options="filteredItems"
-    :option-id="'name'"
+    :option-key="'name'"
     :loading="isSearchLoading"
     :close-on-select="false"
     :clear-on-select="false"
@@ -215,6 +215,7 @@ Returns input given or array of items selected
 | `formErrors` | array | `[]` | Array of errors to display |
 | `transitionName` | string | `fade` | Name of css transition class |
 | `debounce` | number | `0` | Enable debounce for search update by setting a value (other than 0) |
+| `showOnFocus` | boolean | `false` | Show dropdown on focus. No need to type anything. |
 
 ## Slots
 ### label
