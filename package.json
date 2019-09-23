@@ -1,6 +1,6 @@
 {
     "name": "@odyzeo/form-autocomplete",
-    "version": "3.1.2",
+    "version": "3.1.3",
     "description": "Odyzeo form autocomplete component with Vue",
     "main": "dist/form-autocomplete.umd.js",
     "keywords": [
